@@ -1,0 +1,62 @@
+﻿Mikhail D. Kilat
+Clent Noelson Olarte                        8-Jasmine                        CS2 Draft
+
+
+
+
+Project Title: InternConnect: A PSHS-EVC Leave Pass Request App
+
+
+Problem Statement: 
+Interns who stay in dorms must get a leave pass whenever they leave for school activities, errands, or personal reasons. The dorm manager usually approves the leave request, but there may be times when the dorm manager is out, increasing the time to receive approval. Communication from parents can also add to the delay for requests, making it even more difficult for interns to follow dorm procedures faster. The app was developed to make the leave pass process faster, easier, and accessible. 
+
+
+Project Objectives:
+The objective of this app is to enable interns of PSHS-EVC to fill out the leave pass swiftly when the dorm manager/assistant isn't present or when the parents/ guardians take a long time to send a confirmation letter. The delivery method and the tool that will be used for this app will be through Gmail in order to notify the parents of the intern/s. If the parents have not received it yet or will have to receive it at a later time, the intern will contact their parents to send the confirmation letter. The intern will send the confirmation letter to the dorm manager for approval, especially when the manager is not available in the dormitories.
+
+
+Planned Features:
+For our features, we will add respective passwords for interns and dorm managers or other dorm faculty. Another feature that we will add are the reasons to leave the campus that the intern will choose from. The last feature involves adding a parental approval system to the app. Whenever an intern requests permission to leave campus, the app will notify their parent or guardian and ask for confirmation. The parent can respond through a secure link, and their approval or denial will automatically be recorded in the system. Dorm managers will only be able to finalize the intern’s exit once this confirmation is received. This feature ensures that all off-campus requests are monitored and approved by both parents and dorm staff.
+
+
+Planned Inputs and Outputs:
+Inputs:
+-Option whether you are an intern or a dorm manager
+-Respective password depending on the previous input
+-Grade level and section of the intern
+-Phone numbers and email addresses of the intern’s parent/s
+-Reason to leave the campus
+-Option whether the parent/s allowed the intern to leave or not
+
+
+Outputs:
+-Reason to leave the campus given by the intern
+-Question to the parent/s to allow their child to leave or not
+-Notification to the intern if their parent/s approved or not
+
+
+Logic Plan:
+START
+Print “Are you an intern or a dorm manager?”
+Enter option
+Print “Enter your full name:”
+Enter name
+Print “Enter the respective password (EVC_INTERN/EVC_DORM_MANAGER):“
+Enter password
+Print “Enter your grade level and section:“
+Enter level, section
+Print “What is your reason to leave the campus? (Go home, school competition, others)
+Enter reason
+[IF reason = others
+Print “Enter your specific reason to leave:”
+Enter specific_reason
+Print “Your child is requesting to go off-campus. Their reason is:” &specific_reason& “Do you want to let them go? (type y/n or Y/N)”
+Enter confirm]
+[ELSE
+Print “Your child is requesting to go off-campus. Their reason is:” &reason& “Do you want to let them go? (type y/n or Y/N)”
+Enter confirm
+IF confirm = n/N
+Print “Your parent did not agree”
+ELSE IF confirm = y/N
+Print “The request is approved.”
+END
