@@ -1,0 +1,46 @@
+# ask for name (no blanks allowed)
+while True:
+    name = input("Enter your full name: ").strip()
+    if name != "":
+        break
+    print("Name cannot be empty. Please try again.")
+
+# ask for role (only 'i' or 'd')
+while True:
+    opt1 = input("Are you an intern or a dorm manager? (i/d): ").lower().strip()
+    if opt1 in ['i', 'd']:
+        break
+    print("Invalid input. Please enter 'i' for intern or 'd' for dorm manager.")
+
+# intern path
+if opt1 == 'i':
+    ipassword = input("Enter the respective password for interns: ").strip()
+    if ipassword == "EVC_INTERN":
+        # reason input validation (cannot be empty)
+        while True:
+            reason = input("Enter your reason to leave the campus: ").strip()
+            if reason != "":
+                break
+            print("Reason cannot be empty. Please try again.")
+        
+        # confirm yes/no
+        while True:
+            confirm = input(f"Your child's reason is:\n{reason}\nDo you allow them? (yes/no): ").lower().strip()
+            if confirm in ["yes", "no"]:
+                break
+            print("Please type 'yes' or 'no' only.")
+
+        if confirm == "yes":
+            print("Your parents allowed you to leave the campus.")
+        else:
+            print("Your parents did not allow you to leave the campus.")
+    else:
+        print("Wrong password.")
+
+# dorm manager path
+elif opt1 == 'd':
+    dpassword = input("Enter the respective password for dorm managers: ").strip()
+    if dpassword == "EVC_DORM":
+        print("Access granted. Welcome, dorm manager!")
+    else:
+        print("Wrong password.")
