@@ -1,0 +1,65 @@
+pending_requests = [
+    {
+        "full_name": "Phil Majam",
+        "grade_section": "Grade 8 - Sampaguita",
+        "reason": "Family gathering",
+        "parent_confirmed": "Yes"
+    },
+    {
+        "full_name": "Febb Layson",
+        "grade_section": "Grade 8 - Sampaguita",
+        "reason": "Medical appointment",
+        "parent_confirmed": "No"
+    },
+    {
+        "full_name": "Caiden Alava",
+        "grade_section": "Grade 8 - Sampaguita",
+        "reason": "Competition",
+        "parent_confirmed": "Yes"
+    }
+]
+
+while True:
+    print("\nPending Leave Requests:")
+    i = 1
+    for request in pending_requests:
+        print(f"{i}. {request['full_name']} ({request['grade_section']})")
+        i += 1
+
+    try:
+        choice = int(input("\nEnter the number of the request you want to review (or 0 to exit): "))
+        if choice == 0:
+            print("Exiting program.")
+            break
+        if not (1 <= choice <= len(pending_requests)):
+            print("Invalid choice. Returning to menu...")
+            continue
+    except ValueError:
+        print("Invalid input. Returning to menu...")
+        continue
+
+    selected = pending_requests[choice - 1]
+
+    print("\n--- Request Details ---")
+    print(selected["full_name"])
+    print(selected["grade_section"])
+    print(selected["reason"])
+    print("Parent Confirmation:", selected["parent_confirmed"])
+
+    decision = input("\nApprove this request? (yes/no, or 'back' to return to menu): ").strip().lower()
+    if decision == "back":
+        print("Returning to menu...")
+        continue
+    elif decision == "yes":
+        status = "Approved"
+    elif decision == "no":
+        status = "Denied"
+    else:
+        print("Invalid input. Returning to menu...")
+        continue
+
+    print("\n--- Final Decision ---")
+    print(selected["full_name"])
+    print(selected["grade_section"])
+    print(selected["reason"])
+    print(status)
