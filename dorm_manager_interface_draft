@@ -1,0 +1,48 @@
+pending_requests = [
+    {
+        "full_name": "Phil Majam",
+        "grade_section": "Grade 8 - Sampaguita",
+        "reason": "Family gathering",
+        "parent_confirmed": "Yes"
+    },
+    {
+        "full_name": "Febb Layson",
+        "grade_section": "Grade 8 - Sampaguita",
+        "reason": "Medical appointment",
+        "parent_confirmed": "No"
+    },
+    {
+        "full_name": "Caiden Alava",
+        "grade_section": "Grade 8 - Sampaguita",
+        "reason": "Competition",
+        "parent_confirmed": "Yes"
+    }
+]
+
+print("Pending Leave Requests:")
+i = 1
+for request in pending_requests:
+    print(f"{i}. {request['full_name']} ({request['grade_section']})")
+    i += 1
+
+choice = int(input("\nEnter the number of the request you want to review: "))
+selected = pending_requests[choice - 1]
+
+print("\n--- Request Details ---")
+print(selected["full_name"])
+print(selected["grade_section"])
+print(selected["reason"])
+print("Parent Confirmation:", selected["parent_confirmed"])
+
+decision = input("\nApprove this request? (yes/no): ").strip().lower()
+
+if decision == "yes":
+    status = "Approved"
+else:
+    status = "Denied"
+
+print("\n--- Final Decision ---")
+print(selected["full_name"])
+print(selected["grade_section"])
+print(selected["reason"])
+print(status)
