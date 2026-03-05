@@ -1,0 +1,56 @@
+import datetime
+
+print("\n--- Intern Leave Request Form ---")
+
+name = input("Enter your full name: ").strip()
+grade_section = input("Enter your grade level and section: ").strip()
+reason = input("Enter your reason to leave the campus: ").strip()
+parent_confirmed = input("Did your parents approve? (yes/no): ").strip().lower()
+
+if parent_confirmed not in ["yes", "no"]:
+    print("Invalid input for parent confirmation. Exiting program...")
+else:
+    today = datetime.date.today().strftime("%Y-%m-%d")
+
+    request = {
+        "date": today,
+        "name": name,
+        "grade_section": grade_section,
+        "reason": reason,
+        "parent_confirmed": "Yes" if parent_confirmed == "yes" else "No"
+    }
+
+    while True:
+        print("\n--- Current Request Details ---")
+        print("Date:", request["date"])
+        print("Name:", request["name"])
+        print("Grade/Section:", request["grade_section"])
+        print("Reason:", request["reason"])
+        print("Parent Confirmation:", request["parent_confirmed"])
+
+        edit_choice = input("\nDo you want to edit any detail? (name/grade/reason/parent/no): ").strip().lower()
+
+        if edit_choice == "name":
+            request["name"] = input("Enter corrected name: ").strip()
+        elif edit_choice == "grade":
+            request["grade_section"] = input("Enter corrected grade/section: ").strip()
+        elif edit_choice == "reason":
+            request["reason"] = input("Enter corrected reason: ").strip()
+        elif edit_choice == "parent":
+            parent_confirmed = input("Did your parents approve? (yes/no): ").strip().lower()
+            if parent_confirmed in ["yes", "no"]:
+                request["parent_confirmed"] = "Yes" if parent_confirmed == "yes" else "No"
+            else:
+                print("Invalid input. Keeping previous value.")
+        elif edit_choice == "no":
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
+    print("\n--- Final Leave Pass Request ---")
+    print("Date:", request["date"])
+    print("Name:", request["name"])
+    print("Grade/Section:", request["grade_section"])
+    print("Reason:", request["reason"])
+    print("Parent Confirmation:", request["parent_confirmed"])
+    print("\nRequest submitted. Exiting program.")
