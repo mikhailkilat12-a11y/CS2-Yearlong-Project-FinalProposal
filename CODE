@@ -1,0 +1,216 @@
+Login Form Code
+
+
+from ._anvil_designer import LoginFormTemplate
+from anvil import *
+import anvil.server
+import anvil.tables as tables
+import anvil.tables.query as q
+from anvil.tables import app_tables
+import anvil.users
+
+class LoginForm(LoginFormTemplate):
+  def __init__(self, **properties):
+    self.init_components(**properties)
+
+  def login_button_click(self, **event_args):
+    email = self.email_box.text.strip()
+    password = self.password_box.text.strip()
+
+    if not email or "@" not in email or "." not in email or " " in email:
+      alert("Please enter a valid email address.", title="Error")
+      return
+    if not password or len(password) < 8:
+      alert("Password must be at least 8 characters.", title="Error")
+      return
+
+    try:
+      user = anvil.users.login_with_email(email, password)
+      if user:
+        role = user['role'] if 'role' in user else None
+        if not role:
+          alert("No role assigned. Please sign up again.", title="Error")
+          open_form("SignUpForm")
+          return
+        self.redirect_by_role(user)
+      else:
+        alert("Invalid credentials.", title="Error")
+    except Exception as e:
+      alert(f"Login failed: {e}", title="Error")
+
+  def signup_button_click(self, **event_args):
+    open_form("SignUpForm")
+
+  def redirect_by_role(self, user):
+    if user['role'] == "Intern":
+      open_form("InternForm")
+    elif user['role'] == "Manager":
+      open_form("ManagerForm")
+
+
+
+
+Intern Form Template
+
+
+
+from ._anvil_designer import InternFormTemplate
+from anvil import *
+import anvil.users
+from anvil.tables import app_tables
+import anvil.server
+
+class InternForm(InternFormTemplate):
+  def __init__(self, **properties):
+    user = anvil.users.get_user()
+    if not user:
+      open_form("LoginForm")
+
+    self.init_components(**properties)
+
+    self.purpose_dropdown.items = [
+      "Go Home (during holidays/weekends)",
+      "Attend Competition/Research (attach proof)",
+      "Others (Personal)"
+    ]
+    self.proof_loader.visible = False
+    self.other_reason_box.visible = False
+
+  def purpose_dropdown_change(self, **event_args):
+    selected = self.purpose_dropdown.selected_value
+    if selected and selected.startswith("Attend Competition"):
+      self.proof_loader.visible = True
+      self.other_reason_box.visible = False
+    elif selected and selected.startswith("Others"):
+      self.other_reason_box.visible = True
+      self.proof_loader.visible = False
+    else:
+      self.proof_loader.visible = False
+      self.other_reason_box.visible = False
+
+  def submit_button_click(self, **event_args):
+    name = self.name_box.text.strip()
+
+
+
+
+Manager Form Template
+
+
+from ._anvil_designer import ManagerFormTemplate
+from anvil import *
+import anvil.users
+import anvil.server
+
+class ManagerForm(ManagerFormTemplate):
+  def __init__(self, **properties):
+    user = anvil.users.get_user()
+    if not user or user['role'] != "Manager":
+      alert("Access denied. Managers only.")
+      open_form("LoginForm")
+      return
+
+    self.init_components(**properties)
+    self.refresh_requests()
+
+  def refresh_requests(self):
+    rows = anvil.server.call("get_all_requests")
+    self.requests_panel.items = rows
+
+  def approve_button_click(self, **event_args):
+    selected = self.requests_panel.get_selected_row()
+    if not selected:
+      alert("Please select a request to approve.", title="Error")
+      return
+    if selected['manager_status'] != "Pending":
+      alert("This request has already been processed.", title="Error")
+      return
+
+    success = anvil.server.call("update_request_status", selected.get_id(), "Approved")
+    if success:
+      alert(f"Request from {selected['student_name']} approved.", title="Success")
+      self.refresh_requests()
+
+  def deny_button_click(self, **event_args):
+    selected = self.requests_panel.get_selected_row()
+
+
+
+Sign Up  Form Template
+
+
+from ._anvil_designer import SignUpFormTemplate
+from anvil import *
+import anvil.server
+import anvil.users
+import anvil.tables as tables
+import anvil.tables.query as q
+from anvil.tables import app_tables
+
+class SignUpForm(SignUpFormTemplate):
+  def __init__(self, **properties):
+    self.init_components(**properties)
+    self.role_dropdown.items = ["Intern", "Manager"]
+
+  def signup_button_click(self, **event_args):
+    email = self.email_box.text.strip()
+    password = self.password_box.text.strip()
+    name = self.name_box.text.strip()
+    role = self.role_dropdown.selected_value
+
+    try:
+      user = anvil.server.call("signup_user", email, password, name, role)
+      alert(f"Account created successfully as {role}!", title="Success")
+      self.redirect_by_role(user)
+    except Exception as e:
+      alert(f"Signup failed: {e}", title="Error")
+
+  def back_button_click(self, **event_args):
+    open_form("LoginForm")
+
+  def redirect_by_role(self, user):
+    if user['role'] == "Intern":
+      open_form("InternForm")
+    elif user['role'] == "Manager":
+      open_form("ManagerForm")
+
+
+Server Code
+
+
+import anvil.server
+import anvil.users
+import datetime
+from anvil.tables import app_tables
+
+@anvil.server.callable
+def signup_user(email, password, name, role):
+  # Validation
+  if not email or "@" not in email or "." not in email or " " in email:
+    raise Exception("Invalid email address")
+  if not password or len(password) < 8 or password.isalpha() or password.isdigit():
+    raise Exception("Password must be at least 8 characters and include letters and numbers")
+  if not name or any(char.isdigit() for char in name) or not name.replace(" ", "").isalpha():
+    raise Exception("Name must contain only letters")
+  if role not in ["Intern", "Manager"]:
+    raise Exception("Invalid role")
+
+  # Create account
+  user = anvil.users.signup_with_email(email, password)
+  user['name'] = name
+  user['role'] = role
+  return user
+
+@anvil.server.callable
+def get_timestamp():
+  return datetime.datetime.now()
+
+@anvil.server.callable
+def get_all_requests():
+  return app_tables.requests.search()
+
+@anvil.server.callable
+def update_request_status(request_id, status):
+  row = app_tables.requests.get_by_id(request_id)
+  if row:
+    row['manager_status'] = status
